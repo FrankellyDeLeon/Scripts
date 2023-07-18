@@ -1,1 +1,194 @@
+Example 1: 
+
+# Import the Cisco Intersight module
+Import-Module Cisco.Intersight
+
+# Connect to Cisco Intersight
+Connect-Intersight -ApiKey "<your-api-key>" -SecretKey "<your-secret-key>"
+
+# Get the list of existing RBAC roles
+$rbacRoles = Get-IntersightRbacRole
+
+# Display the existing RBAC roles
+Write-Host "Existing RBAC Roles:"
+$rbacRoles | Select-Object Name, Description
+
+# Create a new RBAC role
+$roleName = "MyCustomRole"
+$roleDescription = "Custom role for managing network devices"
+$rolePrivileges = "network-device-read", "network-device-write"
+$role = New-IntersightRbacRole -Name $roleName -Description $roleDescription -Privilege $rolePrivileges
+
+# Display the newly created RBAC role
+Write-Host "Newly created RBAC Role:"
+$role | Select-Object Name, Description, Privilege
+
+# Update the privileges of an existing RBAC role
+$existingRoleName = "ExistingRole"
+$existingRole = $rbacRoles | Where-Object { $_.Name -eq $existingRoleName }
+$updatedPrivileges = $existingRole.Privilege + "network-device-management"
+Set-IntersightRbacRole -RoleId $existingRole.ObjectId -Privilege $updatedPrivileges
+
+# Display the updated RBAC role
+Write-Host "Updated RBAC Role:"
+Get-IntersightRbacRole -RoleId $existingRole.ObjectId | Select-Object Name, Description, Privilege
+
+# Delete a specific RBAC role
+$roleToDelete = "RoleToDelete"
+$roleToDeleteObj = $rbacRoles | Where-Object { $_.Name -eq $roleToDelete }
+Remove-IntersightRbacRole -RoleId $roleToDeleteObj.ObjectId
+
+# Disconnect from Cisco Intersight
+Disconnect-Intersight
+
+In this script, we first import the Cisco Intersight module and connect to the Cisco Intersight platform using the provided API key and secret key. We then use various cmdlets to interact with RBAC functionality.
+
+The script retrieves the list of existing RBAC roles and displays their names and descriptions. It then creates a new RBAC role with a custom name, description, and a set of privileges. The script displays the details of the newly created role.
+
+Next, the script updates the privileges of an existing RBAC role by adding a new privilege to it. It displays the updated role's details.
+
+The script also demonstrates how to delete a specific RBAC role by providing its name.
+Finally, the script disconnects from Cisco Intersight.
+
+Please note that you need to replace <your-api-key> and <your-secret-key> with your actual API key and secret key provided by Cisco Intersight. Additionally, adapt the role names and privilege names according to your specific requirements.
+
+
+
+Example 2:
+
+# Import the Cisco Intersight module
+Import-Module Cisco.Intersight
+
+# Connect to Cisco Intersight
+Connect-Intersight -ApiKey "<your-api-key>" -SecretKey "<your-secret-key>"
+
+# Create a new RBAC role
+$roleName = "CustomRole"
+$roleDescription = "Custom role for managing storage resources"
+$rolePrivileges = @(
+    "storage-read",
+    "storage-write",
+    "storage-delete"
+)
+$role = New-IntersightRbacRole -Name $roleName -Description $roleDescription -Privilege $rolePrivileges
+
+# Display the newly created RBAC role
+Write-Host "Newly created RBAC Role:"
+$role | Select-Object Name, Description, Privilege
+
+# Create a new user and assign the RBAC role
+$userEmail = "user@example.com"
+$userFirstName = "John"
+$userLastName = "Doe"
+$userPassword = ConvertTo-SecureString -String "P@ssw0rd" -AsPlainText -Force
+$user = New-IntersightRbacUser -Email $userEmail -FirstName $userFirstName -LastName $userLastName -Password $userPassword
+Add-IntersightRbacUserRole -UserId $user.ObjectId -RoleId $role.ObjectId
+
+# Display the details of the user
+Write-Host "Newly created User:"
+$user | Select-Object FirstName, LastName, Email
+
+# Get the list of RBAC users and their assigned roles
+$rbacUsers = Get-IntersightRbacUser
+Write-Host "RBAC Users and Assigned Roles:"
+$rbacUsers | ForEach-Object {
+    $assignedRoles = Get-IntersightRbacUserRole -UserId $_.ObjectId
+    $_ | Select-Object FirstName, LastName, Email, @{Name="AssignedRoles"; Expression={$assignedRoles.Name}}
+}
+
+# Remove a user from a specific RBAC role
+$userToRemove = "user@example.com"
+$userToRemoveObj = $rbacUsers | Where-Object { $_.Email -eq $userToRemove }
+Remove-IntersightRbacUserRole -UserId $userToRemoveObj.ObjectId -RoleId $role.ObjectId
+
+# Display the updated list of RBAC users and their assigned roles
+Write-Host "Updated RBAC Users and Assigned Roles:"
+$rbacUsers | ForEach-Object {
+    $assignedRoles = Get-IntersightRbacUserRole -UserId $_.ObjectId
+    $_ | Select-Object FirstName, LastName, Email, @{Name="AssignedRoles"; Expression={$assignedRoles.Name}}
+}
+
+# Delete a specific RBAC role
+Remove-IntersightRbacRole -RoleId $role.ObjectId
+
+# Disconnect from Cisco Intersight
+Disconnect-Intersight
+
+In this script, we import the Cisco Intersight module and connect to the Cisco Intersight platform using the provided API key and secret key. Then, we create a new RBAC role with a custom name, description, and a set of privileges related to storage management.
+
+The script then creates a new user and assigns the previously created RBAC role to that user. It displays the details of the newly created user.
+
+Next, we retrieve the list of RBAC users and their assigned roles, and display the information. We then remove the RBAC role assignment for a specific user.
+After that, we display the updated list of RBAC users and their assigned roles. Finally, the script deletes the specific RBAC role that was created earlier.
+
+Remember to replace <your-api-key> and <your-secret-key> with your actual API key and secret key provided by Cisco Intersight. Additionally, customize the role name, privilege names, and user details as per your requirements.
+
+Example 3:
+
+# Import the Cisco Intersight module
+Import-Module Cisco.Intersight
+
+# Connect to Cisco Intersight
+Connect-Intersight -ApiKey "<your-api-key>" -SecretKey "<your-secret-key>"
+
+# Create a new RBAC role
+$roleName = "CustomRole"
+$roleDescription = "Custom role for managing compute resources"
+$rolePrivileges = @(
+    "compute-read",
+    "compute-write",
+    "compute-delete"
+)
+$role = New-IntersightRbacRole -Name $roleName -Description $roleDescription -Privilege $rolePrivileges
+
+# Display the newly created RBAC role
+Write-Host "Newly created RBAC Role:"
+$role | Select-Object Name, Description, Privilege
+
+# Create a new group and assign the RBAC role
+$groupName = "MyGroup"
+$groupDescription = "Group for compute management"
+$group = New-IntersightRbacGroup -Name $groupName -Description $groupDescription
+Add-IntersightRbacGroupRole -GroupId $group.ObjectId -RoleId $role.ObjectId
+
+# Display the details of the group
+Write-Host "Newly created Group:"
+$group | Select-Object Name, Description
+
+# Get the list of RBAC groups and their assigned roles
+$rbacGroups = Get-IntersightRbacGroup
+Write-Host "RBAC Groups and Assigned Roles:"
+$rbacGroups | ForEach-Object {
+    $assignedRoles = Get-IntersightRbacGroupRole -GroupId $_.ObjectId
+    $_ | Select-Object Name, Description, @{Name="AssignedRoles"; Expression={$assignedRoles.Name}}
+}
+
+# Remove a group from a specific RBAC role
+$groupToRemove = "MyGroup"
+$groupToRemoveObj = $rbacGroups | Where-Object { $_.Name -eq $groupToRemove }
+Remove-IntersightRbacGroupRole -GroupId $groupToRemoveObj.ObjectId -RoleId $role.ObjectId
+
+# Display the updated list of RBAC groups and their assigned roles
+Write-Host "Updated RBAC Groups and Assigned Roles:"
+$rbacGroups | ForEach-Object {
+    $assignedRoles = Get-IntersightRbacGroupRole -GroupId $_.ObjectId
+    $_ | Select-Object Name, Description, @{Name="AssignedRoles"; Expression={$assignedRoles.Name}}
+}
+
+# Delete a specific RBAC role
+Remove-IntersightRbacRole -RoleId $role.ObjectId
+
+# Disconnect from Cisco Intersight
+Disconnect-Intersight
+
+In this script, we import the Cisco Intersight module and connect to the Cisco Intersight platform using the provided API key and secret key. Then, we create a new RBAC role with a custom name, description, and a set of privileges related to compute resource management.
+
+The script then creates a new group and assigns the previously created RBAC role to that group. It displays the details of the newly created group.
+
+Next, we retrieve the list of RBAC groups and their assigned roles and display the information. We then remove the RBAC role assignment for a specific group.
+
+After that, we display the updated list of RBAC groups and their assigned roles. Finally, the script deletes the specific RBAC role that was created earlier.
+
+Again, make sure to replace <your-api-key> and <your-secret-key> with your actual API key and secret key provided by Cisco Intersight. Customize the role name, privilege names, group details, and other parameters according to your specific requirements.
+
 
